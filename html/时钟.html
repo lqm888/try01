@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Document</title>
+<style>
+.warp{
+    width:420px;
+    height:420px;
+    margin:50px auto 0;
+
+}
+.cvs{
+    border-radius:50%;
+}
+
+</style>
+</head>
+<body>  
+    <div class="warp">
+        <canvas class="cvs" width="420" height="420"></canvas>
+    </div>
+
+<script>
+    // 时针-6°每秒 -->6°
+    // 分针-6/60°每秒 -->1/10°
+    // 时针- 30 /60/60每秒 -->1/120°
+
+    var cvs = document.querySelector(".cvs");
+    var ctx = cvs.getContext("2d");
+
+function move(){
+    var img = new Image();
+    img.src = "./img/2.jpg";
+    img.onload = function(){
+        // ctx.clearRect(0,0,cvs.width,cvs.height);
+        ctx.drawImage(img,0,0,420,420,0,0,cvs.width,cvs.height);
+
+        ctx.beginPath();
+        ctx.arc(210,210,210,0,2*Math.PI,false)
+        ctx.strokeStyle = "#08A8FF";
+        ctx.lineWidth = 8;
+        ctx.stroke();
+        ctx.closePath();
+
+        ctx.save();
+        ctx.translate(210,210);
+        for(var i=0; i<60; i++){
+            if(i%5 == 0){
+                ctx.beginPath();
+                ctx.moveTo(0,-191)
+                ctx.lineTo(0,-206)
+                ctx.strokeStyle = "#08A8FF";
+                ctx.lineWidth = 8;
+                ctx.stroke();
+                ctx.closePath();
+            }else{
+                ctx.beginPath();
+                ctx.moveTo(0,-196)
+                ctx.lineTo(0,-206)
+                ctx.strokeStyle = "#FFFF00";
+                ctx.lineWidth = 4;
+                ctx.stroke();
+                ctx.closePath();
+            }
+            ctx.rotate(6*Math.PI/180);
+        }
+        ctx.restore();
+
+        // 画时间
+        var date = new Date();
+        var h = date.getHours();
+        var min = date.getMinutes();
+        var s = date.getSeconds();
+        var str = (h < 10 ? "0" + h : h) + ":" + (min < 10 ? "0" + min : min) + ":" + (s < 10 ? "0" + s : s);
+        ctx.beginPath();
+        ctx.font = '30px 微软雅黑';
+        ctx.fillStyle = "#FFFF33";
+        ctx.textAlign = "center";
+        ctx.fillText(str,210,350);
+        ctx.closePath();
+
+        // 获取秒
+        var sec = ( h * 60 + min ) * 60 + s;
+        // 时针
+        ctx.save();
+        ctx.translate(210,210);
+        ctx.rotate(sec * 30 / 60 / 60 * Math.PI / 180);
+        ctx.beginPath();
+        ctx.moveTo(0,14);
+        ctx.lineTo(0,-115);
+        ctx.strokeStyle = "#08A8FF";
+        ctx.lineWidth = 10;
+        ctx.stroke();
+        ctx.closePath();
+        ctx.restore();
+        // 分针
+        ctx.save();
+        ctx.translate(210,210)
+        ctx.rotate((min * 60 + s) * 6 / 60  * Math.PI / 180);
+        ctx.beginPath();
+        
+        ctx.moveTo(0,14);
+        ctx.lineTo(0,-160);
+        ctx.strokeStyle = "#aaFF00";
+        ctx.lineWidth = 6;
+        ctx.stroke();
+
+        ctx.closePath();
+        ctx.restore();
+
+        // 秒针
+        ctx.save();
+        ctx.translate(210,210)
+        ctx.rotate(s * 6 * Math.PI / 180);
+
+        ctx.beginPath();
+        ctx.moveTo(0,14);
+        ctx.lineTo(0,-175);
+        ctx.strokeStyle = "#00FF99";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.closePath();
+        // 秒针圆
+        ctx.beginPath();
+        ctx.arc(0,-160,5,0,2 * Math.PI);
+        ctx.fillStyle = "#6699FF";
+        ctx.strokeStyle = "#ccc";
+        ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
+
+        ctx.restore();
+
+        // 中心圆
+        ctx.save();
+        ctx.translate(210,210)
+
+        ctx.beginPath();
+        ctx.arc(0,0,7,0,2 * Math.PI);
+        ctx.fillStyle = "#6699FF";
+        ctx.strokeStyle = "#ccc";
+        ctx.stroke();
+        ctx.fill();
+        ctx.closePath();
+
+        ctx.restore();
+
+
+    }
+}
+move();
+setInterval(move,1000)
+
+
+</script>
+</body>
+</html>
